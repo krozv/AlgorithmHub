@@ -5,13 +5,13 @@ def solution(relation):
     어떻게 할 건지?
     필요한 변수
     1. 후보키가 가능한 key의 인덱스 리스트 candidate_index_list
-    2. 남은 key index 리스트 key_index_list
+    2. key index 리스트 key_index_list
     3. 순회 중인 Key 개수 변수 key_cnt
     relation의 길이를 측정해서 key 개수 count
     첫번째 key부터 후보키 가능한지 순회하면서 확인.
-    가능할 경우 -> 2번에서 pop, 1번 append
+    가능할 경우 -> 1번 append
     불가능할 경우 -> pass
-    전체 순회 후, 2번에서 남은 key에 대해 3번을 +1 증가해가면서 조합으로 순휘
+    전체 순회 후, 3번을 +1 증가해가면서 조합으로 순회
     '''
     col_cnt = len(relation[0])
     key_index_list = [i for i in range(col_cnt)]
@@ -23,6 +23,7 @@ def solution(relation):
     def check_unique(key_idx_comb):
         total = set()
         for row in relation:
+            # List는 unhashable이어서 추가 안돼
             val = tuple(row[idx] for idx in key_idx_comb)
             if val in total:
                 return False
