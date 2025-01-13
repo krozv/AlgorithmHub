@@ -1,58 +1,49 @@
 # 17623. 괄호
 """
-[조건]
-
+dp[i]: i를 나타내는 올바른 괄호 문자열 중 dmap(X)가 최소값인 것
 """
 import sys
 # sys.stdin = open("input.txt", "r")
 input = sys.stdin.readline
 info = {
-    "1": "(",
-    "2": ")",
-    "3": "{",
-    "4": "}",
-    "5": "[",
-    "6": "]",
+    "(": "1",
+    ")": "2",
+    "{": "3",
+    "}": "4",
+    "[": "5",
+    "]": "6",
 }
 t = int(input())
+
+dp = [""] * 1001
+
+dp[1], dp[2], dp[3] = "()", "{}", "[]"
+
+def dmap(x):
+    string = ""
+    for elem in x:
+        string += info[elem]
+    return int(string)
+
+def find_min_str(x):
+    correct_val = []
+    if x%2 == 0: correct_val.append("("+ dp[x//2] +")")
+    if x%3 == 0: correct_val.append("{"+ dp[x//3] +"}")
+    if x%5 == 0: correct_val.append("["+ dp[x//5] +"]")
+    
+    if correct_val: correct_val = [min(correct_val, key=dmap)]
+
+    for i in range(1, x//2+1):
+        val1 = dp[i] + dp[x-i]
+        val2 = dp[x-i] + dp[i]
+        if not correct_val or (len(correct_val[0]) >= len(val1)): 
+            correct_val.append(val1)
+            correct_val.append(val2)
+    return min(correct_val, key=dmap)
+
+for i in range(4, 1001):
+    dp[i] = find_min_str(i)
+
 for _ in range(t):
     n = int(input())
-    dp = [""] * (n+1)
-
-    dp[1], dp[2], dp[3] = "12", "34", "56"
-
-    for i in range(1, n+1):
-        # i+1 범위 체크
-        if (i+1) <= n:
-            if dp[i+1]:
-                dp[i+1] = str(min(int("12"+dp[i]), int(dp[i]+"12"), int(dp[i+1])))
-            else:
-                dp[i+1] = str(min(int("12"+dp[i]), int(dp[i]+"12")))
-        if (i+2) <= n:
-            if dp[i+2]:
-                dp[i+2] = str(min(int("34"+dp[i]), int(dp[i]+"34"), int(dp[i+2])))
-            else:
-                dp[i+2] = str(min(int("34"+dp[i]), int(dp[i]+"34")))
-        if (i+3) <= n:
-            if dp[i+3]:
-                dp[i+3] = str(min(int("56"+dp[i]), int(dp[i]+"56"), int(dp[i+3])))
-            else:
-                dp[i+3] = str(min(int("56"+dp[i]), int(dp[i]+"56")))
-        if (i*2) <= n:
-            if dp[i*2]:
-                dp[i*2] = str(min(int("1"+dp[i]+"2"), int(dp[i*2])))
-            else:
-                dp[i*2] = str(int("1"+dp[i]+"2"))
-        if (i*3) <= n:
-            if dp[i*3]:
-                dp[i*3] = str(min(int("3"+dp[i]+"4"), int(dp[i*3])))
-            else:
-                dp[i*3] = str(int("3"+dp[i]+"4"))
-        if (i*5) <= n:
-            if dp[i*5]:
-                dp[i*5] = str(min(int("5"+dp[i]+"6"), int(dp[i*5])))
-            else:
-                dp[i*5] = str(int("5"+dp[i]+"6"))
-    for elem in dp[n]:
-        print(info[elem], end="")
-    print()
+    print(dp[n])
